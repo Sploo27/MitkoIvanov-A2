@@ -105,6 +105,9 @@
     <ClInclude Include="Inc\RandGen.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="FastCat.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\GameObject.cpp">
@@ -198,6 +201,9 @@
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\RandGen.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="FastCat.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

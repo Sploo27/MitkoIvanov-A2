@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FastCat.h" />
     <ClInclude Include="Inc\GraphicsDriver.h" />
     <ClInclude Include="Inc\HUD.h" />
     <ClInclude Include="Inc\InputManager.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="Inc\UDPSocket.h" />
     <ClInclude Include="Inc\WeightedTimedMovingAverage.h" />
     <ClInclude Include="Inc\World.h" />
+    <ClCompile Include="FastCat.cpp" />
     <ClCompile Include="Src\GraphicsDriver.cpp" />
     <ClCompile Include="Src\HUD.cpp" />
     <ClCompile Include="Src\InputManager.cpp" />
