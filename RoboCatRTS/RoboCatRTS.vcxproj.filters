@@ -105,7 +105,7 @@
     <ClInclude Include="Inc\RandGen.h">
       <Filter>Inc</Filter>
     </ClInclude>
-    <ClInclude Include="FastCat.h">
+    <ClInclude Include="Inc\FastCat.h">
       <Filter>Inc</Filter>
     </ClInclude>
   </ItemGroup>
@@ -203,7 +203,7 @@
     <ClCompile Include="Src\RandGen.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="FastCat.cpp">
+    <ClCompile Include="Src\FastCat.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

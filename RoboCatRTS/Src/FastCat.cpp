@@ -1,5 +1,4 @@
 #include "RoboCatPCH.h"
-#include "FastCat.h"
 #include <zlib.h>
 
 const float kMoveSpeed = 5.0f;

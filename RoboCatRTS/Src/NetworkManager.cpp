@@ -724,6 +724,28 @@ void NetworkManager::EnterPlayingState()
 		{
 			SpawnCat( iter.first, Vector3( spawnVec.mX, spawnVec.mY + kCatOffset, spawnVec.mZ ) );
 		}
+		
+		float newCatOffset = kCatOffset + 1.0f;
+		//Spawn Fast Cats
+		SpawnFastCat(iter.first, spawnVec);
+		if (spawnVec.mX > 0.0f)
+		{
+			SpawnFastCat(iter.first, Vector3(spawnVec.mX - newCatOffset, spawnVec.mY, spawnVec.mZ));
+		}
+		else
+		{
+			SpawnFastCat(iter.first, Vector3(spawnVec.mX + newCatOffset, spawnVec.mY, spawnVec.mZ));
+		}
+
+		if (spawnVec.mY > 0.0f)
+		{
+			SpawnFastCat(iter.first, Vector3(spawnVec.mX, spawnVec.mY - newCatOffset, spawnVec.mZ));
+		}
+		else
+		{
+			SpawnFastCat(iter.first, Vector3(spawnVec.mX, spawnVec.mY + newCatOffset, spawnVec.mZ));
+		}
+
 		i++;
 	}
 }
@@ -735,6 +757,15 @@ void NetworkManager::SpawnCat( uint32_t inPlayerId, const Vector3& inSpawnVec )
 	cat->SetPlayerId( inPlayerId );
 	cat->SetLocation( Vector3( inSpawnVec.mX, inSpawnVec.mY, 0.0f ) );
 	cat->SetRotation( inSpawnVec.mZ );
+}
+
+void NetworkManager::SpawnFastCat(uint32_t inPlayerId, const Vector3& inSpawnVec)
+{
+	FastCatPtr cat = std::static_pointer_cast< FastCat >(GameObjectRegistry::sInstance->CreateGameObject('FCAT'));
+	cat->SetColor(ScoreBoardManager::sInstance->GetEntry(inPlayerId)->GetColor());
+	cat->SetPlayerId(inPlayerId);
+	cat->SetLocation(Vector3(inSpawnVec.mX, inSpawnVec.mY, 0.0f));
+	cat->SetRotation(inSpawnVec.mZ);
 }
 
 bool NetworkManager::CheckSync( IntToTurnDataMap& inTurnMap )

@@ -47,6 +47,7 @@ bool Engine::StaticInit()
 
  	GameObjectRegistry::sInstance->RegisterCreationFunction( 'RCAT', RoboCat::StaticCreate );
  	GameObjectRegistry::sInstance->RegisterCreationFunction( 'YARN', Yarn::StaticCreate );
+	GameObjectRegistry::sInstance->RegisterCreationFunction('FCAT', FastCat::StaticCreate);
  
  	string destination = StringUtils::GetCommandLineArg( 1 );
  	string name = StringUtils::GetCommandLineArg( 2 );

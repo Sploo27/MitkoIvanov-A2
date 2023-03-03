@@ -53,6 +53,9 @@ using std::map;
 class RoboCat;
 class GameObject;
 
+//add new subclasses?
+class FastCat;
+
 #include "RoboMath.h"
 #include "RandGen.h"
 
@@ -90,6 +93,10 @@ class GameObject;
 #include "Yarn.h"
 #include "StringUtils.h"
 #include "ScoreBoardManager.h"
+
+//include new classes
+#include "FastCat.h"
+
 
 #include "Engine.h"
 
