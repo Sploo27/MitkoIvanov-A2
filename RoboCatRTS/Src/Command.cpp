@@ -90,7 +90,7 @@ MoveCommandPtr MoveCommand::StaticCreate( uint32_t inNetworkId, const Vector3& i
 	uint32_t playerId = NetworkManager::sInstance->GetMyPlayerId();
 
 	//can only issue commands to this unit if I own it, and it's a cat
-	if ( go && go->GetClassId() == RoboCat::kClassId && 
+	if ( go && go->GetClassId() == FastCat::kClassId && 
 		go->GetPlayerId() == playerId )
 	{
 		retVal = std::make_shared< MoveCommand >();
@@ -98,6 +98,16 @@ MoveCommandPtr MoveCommand::StaticCreate( uint32_t inNetworkId, const Vector3& i
 		retVal->mPlayerId = playerId;
 		retVal->mTarget = inTarget;
 	}
+
+	if (go && go->GetClassId() == RoboCat::kClassId &&
+		go->GetPlayerId() == playerId)
+	{
+		retVal = std::make_shared< MoveCommand >();
+		retVal->mNetworkId = inNetworkId;
+		retVal->mPlayerId = playerId;
+		retVal->mTarget = inTarget;
+	}
+
 	return retVal;
 }
 
