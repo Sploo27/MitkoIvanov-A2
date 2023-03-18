@@ -58,6 +58,19 @@ AttackCommandPtr AttackCommand::StaticCreate( uint32_t inMyNetId, uint32_t inTar
 		retVal->mPlayerId = playerId;
 		retVal->mTargetNetId = inTargetNetId;
 	}
+
+	//inclusion for the fast cat
+	if (me && me->GetClassId() == FastCat::kClassId &&
+		me->GetPlayerId() == playerId &&
+		target && target->GetClassId() == FastCat::kClassId &&
+		target->GetPlayerId() != me->GetPlayerId())
+	{
+		retVal = std::make_shared< AttackCommand >();
+		retVal->mNetworkId = inMyNetId;
+		retVal->mPlayerId = playerId;
+		retVal->mTargetNetId = inTargetNetId;
+	}
+
 	return retVal;
 }
 
@@ -75,12 +88,22 @@ void AttackCommand::Read( InputMemoryBitStream& inInputStream )
 void AttackCommand::ProcessCommand()
 {
 	GameObjectPtr obj = NetworkManager::sInstance->GetGameObject( mNetworkId );
+	//robo cat attack command
 	if ( obj && obj->GetClassId() == RoboCat::kClassId &&
 		obj->GetPlayerId() == mPlayerId )
 	{
 		RoboCat* rc = obj->GetAsCat();
 		rc->EnterAttackState( mTargetNetId );
 	}
+
+	//fast cat attack command
+	if (obj && obj->GetClassId() == FastCat::kClassId &&
+		obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* rc = obj->GetAsCat();
+		rc->EnterAttackState(mTargetNetId);
+	}
+
 }
 
 MoveCommandPtr MoveCommand::StaticCreate( uint32_t inNetworkId, const Vector3& inTarget )
@@ -120,11 +143,19 @@ void MoveCommand::Write( OutputMemoryBitStream& inOutputStream )
 void MoveCommand::ProcessCommand()
 {
 	GameObjectPtr obj = NetworkManager::sInstance->GetGameObject( mNetworkId );
+	//normal cat move command
 	if ( obj && obj->GetClassId() == RoboCat::kClassId &&
 		obj->GetPlayerId() == mPlayerId )
 	{
 		RoboCat* rc = obj->GetAsCat();
 		rc->EnterMovingState( mTarget );
+	}
+	//fast cat move command
+	if (obj && obj->GetClassId() == FastCat::kClassId &&
+		obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* fc = obj->GetAsCat();
+		fc->EnterMovingState(mTarget);
 	}
 }
 

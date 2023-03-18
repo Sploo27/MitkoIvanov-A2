@@ -5,7 +5,8 @@ public:
 	{
 		CM_INVALID,
 		CM_ATTACK,
-		CM_MOVE
+		CM_MOVE,
+		CM_SPECIAL
 	};
 
 	Command() :
@@ -34,6 +35,12 @@ protected:
 };
 
 typedef shared_ptr< Command >	CommandPtr;
+
+class SpecialAttackCommand : public Command
+{
+
+};
+
 
 class AttackCommand : public Command
 {
@@ -77,5 +84,6 @@ protected:
 
 	Vector3 mTarget;
 };
+
 
 typedef shared_ptr< MoveCommand > MoveCommandPtr;
