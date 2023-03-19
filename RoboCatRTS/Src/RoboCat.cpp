@@ -91,6 +91,12 @@ void RoboCat::EnterAttackState( uint32_t inTargetNetId )
 		mTargetCat = go;
 		mState = RC_ATTACK;
 	}
+	//make sure it recognizes fast cats
+	if(go && go->GetClassId() == FastCat::kClassId && go->GetPlayerId() != GetPlayerId())
+	{
+		mTargetCat = go;
+		mState = RC_ATTACK;
+	}
 	else
 	{
 		mState = RC_IDLE;
