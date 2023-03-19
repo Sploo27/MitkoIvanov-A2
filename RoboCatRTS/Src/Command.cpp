@@ -25,6 +25,12 @@ shared_ptr< Command > Command::StaticReadAndCreate( InputMemoryBitStream& inInpu
 		retVal->mPlayerId = playerId;
 		retVal->Read( inInputStream );
 		break;
+	case CM_SPECIAL:
+		retVal = std::make_shared<SpecialAttackCommand>();
+		retVal->mNetworkId = networkId;
+		retVal->mPlayerId = playerId;
+		retVal->Read(inInputStream);
+		break;
 	default:
 		LOG( "Read in an unknown command type??" );
 		break;
@@ -100,8 +106,8 @@ void AttackCommand::ProcessCommand()
 	if (obj && obj->GetClassId() == FastCat::kClassId &&
 		obj->GetPlayerId() == mPlayerId)
 	{
-		RoboCat* rc = obj->GetAsCat();
-		rc->EnterAttackState(mTargetNetId);
+		RoboCat* fc = obj->GetAsCat();
+		fc->EnterAttackState(mTargetNetId);
 	}
 
 }
@@ -162,4 +168,65 @@ void MoveCommand::ProcessCommand()
 void MoveCommand::Read( InputMemoryBitStream& inInputStream )
 {
 	inInputStream.Read( mTarget );
+}
+
+shared_ptr<SpecialAttackCommand> SpecialAttackCommand::StaticCreate(uint32_t inMyNetId, const Vector3 inTarget)
+{
+	SpecialAttackCommandPtr retVal;
+	GameObjectPtr go = NetworkManager::sInstance->GetGameObject(inMyNetId);
+	uint32_t playerId = NetworkManager::sInstance->GetMyPlayerId();
+	//can only issue commands to this unit if I own it, and it's a cat,
+	//and if the target is a cat that's on a different team
+	if (go && go->GetClassId() == RoboCat::kClassId &&
+		go->GetPlayerId() == playerId)
+	{
+		retVal = std::make_shared< SpecialAttackCommand >();
+		retVal->mNetworkId = inMyNetId;
+		retVal->mPlayerId = playerId;
+		retVal->mTarget = inTarget;
+	}
+
+	//inclusion for the fast cat
+	if (go && go->GetClassId() == FastCat::kClassId &&
+		go->GetPlayerId() == playerId)
+	{
+		retVal = std::make_shared< SpecialAttackCommand >();
+		retVal->mNetworkId = inMyNetId;
+		retVal->mPlayerId = playerId;
+		retVal->mTarget = inTarget;
+	}
+
+	return retVal;
+}
+
+void SpecialAttackCommand::Write(OutputMemoryBitStream& inOutputStream)
+{
+	Command::Write(inOutputStream);
+	inOutputStream.Write(mTarget);
+}
+
+void SpecialAttackCommand::ProcessCommand()
+{
+	GameObjectPtr obj = NetworkManager::sInstance->GetGameObject(mNetworkId);
+	//robo cat attack command
+	if (obj && obj->GetClassId() == RoboCat::kClassId &&
+		obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* rc = obj->GetAsCat();
+		rc->EnterSpecialAttackState(mTarget);
+	}
+
+	//fast cat attack command
+	if (obj && obj->GetClassId() == FastCat::kClassId &&
+		obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* fc = obj->GetAsCat();
+		fc->EnterSpecialAttackState(mTarget);
+	}
+
+}
+
+void SpecialAttackCommand::Read(InputMemoryBitStream& inInputStream)
+{
+	inInputStream.Read(mTarget);
 }

@@ -23,6 +23,18 @@ void Yarn::InitFromShooter( GameObjectPtr inShooter, GameObjectPtr inTarget )
 	mTargetCat = inTarget;
 }
 
+void Yarn::InitFromPosition(GameObjectPtr inShooter, Vector3 inTarget)
+{
+	SetPlayerId(inShooter->GetPlayerId());
+
+	Vector3 forward = inTarget - inShooter->GetLocation();
+	SetVelocity(forward * kMuzzleSpeed);
+	SetLocation(inShooter->GetLocation());
+
+	//mTargetCat = inTarget;
+}
+
+
 void Yarn::Update( float inDeltaTime )
 {
 	SetLocation( GetLocation() + mVelocity * inDeltaTime );

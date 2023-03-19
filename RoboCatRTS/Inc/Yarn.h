@@ -10,6 +10,7 @@ public:
 	const Vector3&	GetVelocity() const					{ return mVelocity; }
 
 	void		InitFromShooter( GameObjectPtr inShooter, GameObjectPtr inTarget );
+	void		InitFromPosition( GameObjectPtr inShooter, Vector3 inTarget );
 
 	virtual void Update( float inDeltaTime ) override;
 

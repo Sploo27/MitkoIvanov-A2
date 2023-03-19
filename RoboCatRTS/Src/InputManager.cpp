@@ -57,6 +57,9 @@ void InputManager::HandleMouseClick( int32_t inX, int32_t inY, uint8_t button )
 	case SDL_BUTTON_RIGHT:
 		GenerateRightClickCommand( Vector3( worldX, worldY, 0.0f ) );
 		break;
+	case SDL_BUTTON_MIDDLE:
+		GenerateMiddleClickCommand(Vector3(worldX, worldY, 0.0f));
+		break;
 	default:
 		break;
 	}
@@ -86,6 +89,22 @@ void InputManager::GenerateRightClickCommand( const Vector3& inWorldPos )
 			mCommandList.AddCommand( cmd );
 		}
 	}
+}
+
+void InputManager::GenerateMiddleClickCommand(const Vector3& inWorldPos)
+{
+	if (mSelectedNetId > 0)
+	{
+		CommandPtr cmd;
+		cmd = SpecialAttackCommand::StaticCreate(mSelectedNetId, inWorldPos);
+		
+
+		if (cmd)
+		{
+			mCommandList.AddCommand(cmd);
+		}
+	}
+
 }
 
 InputManager::InputManager() :

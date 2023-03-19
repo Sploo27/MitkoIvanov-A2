@@ -103,6 +103,15 @@ void RoboCat::EnterAttackState( uint32_t inTargetNetId )
 	}
 }
 
+void RoboCat::EnterSpecialAttackState(const Vector3& inTarget)
+{
+	mAttackLocation = inTarget;
+
+	UpdateRotation(inTarget);
+
+	mState = RC_SPECIAL;
+}
+
 void RoboCat::TakeDamage( int inDmgAmount )
 {
 	mHealth -= inDmgAmount;
@@ -131,6 +140,10 @@ void RoboCat::Update( float inDeltaTime )
 	case RC_ATTACK:
 		UpdateAttackState( inDeltaTime );
 		break;
+	case RC_SPECIAL:
+		UpdateSpecialAttackState(inDeltaTime);
+		break;
+
 	}
 }
 
@@ -184,5 +197,28 @@ void RoboCat::UpdateAttackState( float inDeltaTime )
 		mTargetCat.reset();
 		mState = RC_IDLE;
 	}
+}
+
+void RoboCat::UpdateSpecialAttackState(float inDeltaTime)
+{
+	mTimeSinceLastAttack += inDeltaTime;
+	
+	Vector3 diff = mAttackLocation - mLocation;
+	float distSq = diff.LengthSq2D();
+
+	//if we're in yarn cooldown, we aren't allowed to do anything
+	if (mTimeSinceLastAttack >= kYarnCooldown)
+	{
+		UpdateRotation(mAttackLocation);
+		
+		mTimeSinceLastAttack = 0.0f;
+		GameObjectPtr me = NetworkManager::sInstance->GetGameObject(mNetworkId);
+		YarnPtr yarn = std::static_pointer_cast<Yarn>(GameObjectRegistry::sInstance->CreateGameObject('YARN'));
+		yarn->InitFromPosition(me, mAttackLocation);
+		
+	}
+	mState = RC_IDLE;
+	
+
 }
 

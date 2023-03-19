@@ -38,9 +38,26 @@ typedef shared_ptr< Command >	CommandPtr;
 
 class SpecialAttackCommand : public Command
 {
+public:
+	SpecialAttackCommand()
+	{
+		mCommandType = CM_SPECIAL;
+	}
+
+	static shared_ptr< SpecialAttackCommand > StaticCreate(uint32_t inMyNetId, const Vector3 inTarget);
+
+	virtual void Write(OutputMemoryBitStream& inOutputStream) override;
+
+	virtual void ProcessCommand() override;
+
+protected:
+	virtual void Read(InputMemoryBitStream& inInputStream) override;
+
+	Vector3 mTarget;
 
 };
 
+typedef shared_ptr< SpecialAttackCommand > SpecialAttackCommandPtr;
 
 class AttackCommand : public Command
 {

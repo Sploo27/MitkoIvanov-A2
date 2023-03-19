@@ -8,6 +8,7 @@ public:
 		RC_IDLE,
 		RC_MOVING,
 		RC_ATTACK,
+		RC_SPECIAL
 	};
 
 	static	GameObjectPtr StaticCreate() { return NetworkManager::sInstance->RegisterAndReturn( new RoboCat() ); }
@@ -18,11 +19,13 @@ public:
 	void UpdateIdleState( float inDeltaTime );
 	void UpdateMovingState( float inDeltaTime );
 	void UpdateAttackState( float inDeltaTime );
+	void UpdateSpecialAttackState(float inDeltaTime);
 	// returns true if the move is done
 	bool MoveToLocation( float inDeltaTime, const Vector3& inLocation );
 	void UpdateRotation( const Vector3& inTarget );
 	void EnterMovingState( const Vector3& inTarget );
 	void EnterAttackState( uint32_t inTargetNetId );
+	void EnterSpecialAttackState(const Vector3& inTarget);
 	void TakeDamage( int inDmgAmount );
 	virtual void HandleDying() override;
 
@@ -31,6 +34,7 @@ public:
 	virtual void WriteForCRC( OutputMemoryBitStream& inStream ) override;
 private:
 	Vector3				mMoveLocation;
+	Vector3				mAttackLocation;
 	SpriteComponentPtr	mSpriteComponent;
 
 	///move down here for padding reasons...
