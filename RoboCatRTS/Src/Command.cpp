@@ -31,6 +31,12 @@ shared_ptr< Command > Command::StaticReadAndCreate( InputMemoryBitStream& inInpu
 		retVal->mPlayerId = playerId;
 		retVal->Read(inInputStream);
 		break;
+	case CM_DASH:
+		retVal = std::make_shared<DashCommand>();
+		retVal->mNetworkId = networkId;
+		retVal->mPlayerId = playerId;
+		retVal->Read(inInputStream);
+		break;
 	default:
 		LOG( "Read in an unknown command type??" );
 		break;
@@ -227,6 +233,63 @@ void SpecialAttackCommand::ProcessCommand()
 }
 
 void SpecialAttackCommand::Read(InputMemoryBitStream& inInputStream)
+{
+	inInputStream.Read(mTarget);
+}
+
+shared_ptr<DashCommand> DashCommand::StaticCreate(uint32_t inMyNetId)
+{
+	DashCommandPtr retVal;
+	GameObjectPtr go = NetworkManager::sInstance->GetGameObject(inMyNetId);
+	uint32_t playerId = NetworkManager::sInstance->GetMyPlayerId();
+
+	//can only issue commands to this unit if I own it, and it's a cat
+	if (go && go->GetClassId() == FastCat::kClassId &&
+		go->GetPlayerId() == playerId)
+	{
+		retVal = std::make_shared< DashCommand >();
+		retVal->mNetworkId = inMyNetId;
+		retVal->mPlayerId = playerId;
+	}
+
+	if (go && go->GetClassId() == RoboCat::kClassId &&
+		go->GetPlayerId() == playerId)
+	{
+		retVal = std::make_shared< DashCommand >();
+		retVal->mNetworkId = inMyNetId;
+		retVal->mPlayerId = playerId;
+	}
+
+	return retVal;
+}
+
+void DashCommand::Write(OutputMemoryBitStream& inOutputStream)
+{
+	Command::Write(inOutputStream);
+	inOutputStream.Write(mTarget);
+}
+
+void DashCommand::ProcessCommand()
+{
+	GameObjectPtr obj = NetworkManager::sInstance->GetGameObject(mNetworkId);
+	//normal cat move command
+	if (obj && obj->GetClassId() == RoboCat::kClassId &&
+		obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* rc = obj->GetAsCat();
+		rc->EnterDashState();
+	}
+	//fast cat move command
+	if (obj && obj->GetClassId() == FastCat::kClassId &&
+		obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* fc = obj->GetAsCat();
+		fc->EnterDashState();
+	}
+
+}
+
+void DashCommand::Read(InputMemoryBitStream& inInputStream)
 {
 	inInputStream.Read(mTarget);
 }

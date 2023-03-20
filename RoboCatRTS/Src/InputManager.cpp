@@ -38,6 +38,9 @@ void InputManager::HandleInput( EInputAction inInputAction, int inKeyCode )
 		//start the game!
 		NetworkManager::sInstance->TryStartGame();
 		break;
+	case SDLK_LSHIFT:
+		GenerateLeftShiftCommand();
+		break;
 	default:
 		break;
 	}
@@ -98,6 +101,22 @@ void InputManager::GenerateMiddleClickCommand(const Vector3& inWorldPos)
 		CommandPtr cmd;
 		cmd = SpecialAttackCommand::StaticCreate(mSelectedNetId, inWorldPos);
 		
+
+		if (cmd)
+		{
+			mCommandList.AddCommand(cmd);
+		}
+	}
+
+}
+
+void InputManager::GenerateLeftShiftCommand()
+{
+	if (mSelectedNetId > 0)
+	{
+		CommandPtr cmd;
+		cmd = DashCommand::StaticCreate(mSelectedNetId);
+
 
 		if (cmd)
 		{

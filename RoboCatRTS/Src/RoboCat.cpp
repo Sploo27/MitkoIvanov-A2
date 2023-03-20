@@ -2,6 +2,7 @@
 #include <zlib.h>
 
 const float kMoveSpeed = 2.5f;
+const float kDashSpeed = kMoveSpeed * 3.0f;
 const float kAttackRangeSq = 1.5f * 1.5f;
 const float kYarnCooldown = 1.0f;
 
@@ -55,6 +56,28 @@ bool RoboCat::MoveToLocation( float inDeltaTime, const Vector3& inLocation )
 	}
 
 	return finishedMove;
+}
+
+bool RoboCat::Dash(float inDeltaTime)//dashes the cat straight
+{
+	bool finishedMove = false;
+
+	Vector3 toMoveVec = GetForwardVector();
+	mDashTime += inDeltaTime;
+	float mMaxDashTime = 0.4f;
+
+	if (mDashTime < mMaxDashTime)
+	{
+		SetLocation(GetLocation() + toMoveVec * inDeltaTime * (kDashSpeed));
+	}
+	else
+	{
+		finishedMove = true;
+		mDashTime = 0.0f;
+	}
+
+	return finishedMove;
+
 }
 
 void RoboCat::UpdateRotation( const Vector3& inTarget )
@@ -112,6 +135,11 @@ void RoboCat::EnterSpecialAttackState(const Vector3& inTarget)
 	mState = RC_SPECIAL;
 }
 
+void RoboCat::EnterDashState()
+{
+	mState = RC_DASH;
+}
+
 void RoboCat::TakeDamage( int inDmgAmount )
 {
 	mHealth -= inDmgAmount;
@@ -142,6 +170,9 @@ void RoboCat::Update( float inDeltaTime )
 		break;
 	case RC_SPECIAL:
 		UpdateSpecialAttackState(inDeltaTime);
+		break;
+	case RC_DASH:
+		UpdateDashState(inDeltaTime);
 		break;
 
 	}
@@ -219,6 +250,17 @@ void RoboCat::UpdateSpecialAttackState(float inDeltaTime)
 	}
 	mState = RC_IDLE;
 	
+
+}
+
+void RoboCat::UpdateDashState(float inDeltaTime)
+{
+	mTimeSinceLastAttack += inDeltaTime;
+	if (Dash(inDeltaTime))
+	{
+		//done with the move, so go idle
+		mState = RC_IDLE;
+	}
 
 }
 

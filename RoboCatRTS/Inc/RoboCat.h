@@ -8,7 +8,8 @@ public:
 		RC_IDLE,
 		RC_MOVING,
 		RC_ATTACK,
-		RC_SPECIAL
+		RC_SPECIAL,
+		RC_DASH
 	};
 
 	static	GameObjectPtr StaticCreate() { return NetworkManager::sInstance->RegisterAndReturn( new RoboCat() ); }
@@ -20,12 +21,18 @@ public:
 	void UpdateMovingState( float inDeltaTime );
 	void UpdateAttackState( float inDeltaTime );
 	void UpdateSpecialAttackState(float inDeltaTime);
+	void UpdateDashState(float inDeltaTime);
+
 	// returns true if the move is done
 	bool MoveToLocation( float inDeltaTime, const Vector3& inLocation );
+	bool Dash(float inDeltaTime);
 	void UpdateRotation( const Vector3& inTarget );
+	
 	void EnterMovingState( const Vector3& inTarget );
 	void EnterAttackState( uint32_t inTargetNetId );
 	void EnterSpecialAttackState(const Vector3& inTarget);
+	void EnterDashState();
+
 	void TakeDamage( int inDmgAmount );
 	virtual void HandleDying() override;
 
@@ -43,6 +50,7 @@ private:
 	uint32_t			mTargetNetId;
 	GameObjectPtr		mTargetCat;
 	float				mTimeSinceLastAttack;
+	float				mDashTime;
 };
 
 typedef shared_ptr< RoboCat >	RoboCatPtr;

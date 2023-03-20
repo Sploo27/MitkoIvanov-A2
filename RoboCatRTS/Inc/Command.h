@@ -6,7 +6,8 @@ public:
 		CM_INVALID,
 		CM_ATTACK,
 		CM_MOVE,
-		CM_SPECIAL
+		CM_SPECIAL,
+		CM_DASH
 	};
 
 	Command() :
@@ -35,6 +36,28 @@ protected:
 };
 
 typedef shared_ptr< Command >	CommandPtr;
+
+class DashCommand : public Command
+{
+public:
+	DashCommand()
+	{
+		mCommandType = CM_DASH;
+	}
+
+	static shared_ptr< DashCommand > StaticCreate(uint32_t inMyNetId);
+
+	virtual void Write(OutputMemoryBitStream& inOutputStream) override;
+
+	virtual void ProcessCommand() override;
+
+protected:
+	virtual void Read(InputMemoryBitStream& inInputStream) override;
+
+	Vector3 mTarget;
+};
+
+typedef shared_ptr< DashCommand > DashCommandPtr;
 
 class SpecialAttackCommand : public Command
 {

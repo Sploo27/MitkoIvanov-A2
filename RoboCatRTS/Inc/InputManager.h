@@ -19,6 +19,7 @@ public:
 private:
 	void			GenerateRightClickCommand( const Vector3& inWorldPos );
 	void			GenerateMiddleClickCommand(const Vector3& inWorldPos);
+	void			GenerateLeftShiftCommand();
 	InputManager();
 
 	
