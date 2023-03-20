@@ -140,6 +140,16 @@ void RoboCat::EnterDashState()
 	mState = RC_DASH;
 }
 
+void RoboCat::EnterBuildState(const Vector3& inTarget)
+{
+	mBuildLocation = inTarget;
+
+	UpdateRotation(inTarget);
+
+	mState = RC_BUILD;
+
+}
+
 void RoboCat::TakeDamage( int inDmgAmount )
 {
 	mHealth -= inDmgAmount;
@@ -174,6 +184,8 @@ void RoboCat::Update( float inDeltaTime )
 	case RC_DASH:
 		UpdateDashState(inDeltaTime);
 		break;
+	case RC_BUILD:
+		UpdateBuildState(inDeltaTime);
 
 	}
 }
@@ -249,8 +261,6 @@ void RoboCat::UpdateSpecialAttackState(float inDeltaTime)
 		
 	}
 	mState = RC_IDLE;
-	
-
 }
 
 void RoboCat::UpdateDashState(float inDeltaTime)
@@ -262,5 +272,17 @@ void RoboCat::UpdateDashState(float inDeltaTime)
 		mState = RC_IDLE;
 	}
 
+}
+
+void RoboCat::UpdateBuildState(float inDeltaTime)
+{
+	mTimeSinceLastAttack += inDeltaTime;
+
+	UpdateRotation(mBuildLocation);
+
+	GameObjectPtr me = NetworkManager::sInstance->GetGameObject(mNetworkId);
+	NetworkManager::sInstance->SpawnCat(mPlayerId, mBuildLocation);
+	
+	mState = RC_IDLE;
 }
 

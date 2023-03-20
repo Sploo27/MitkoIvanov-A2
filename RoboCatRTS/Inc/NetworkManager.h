@@ -118,11 +118,13 @@ private:
 
 	void	UpdateHighestPlayerId( uint32_t inId );
 	void	EnterPlayingState();
+public:
 	void	SpawnCat( uint32_t inPlayerId, const Vector3& inSpawnVec );
 	
 	//new functions for new objects
 	void SpawnFastCat(uint32_t inPlayerId, const Vector3& inSpawnVec);
 
+private:
 	//these should stay ordered!
 	typedef map< uint32_t, SocketAddress > IntToSocketAddrMap;
 	typedef map< uint32_t, string > IntToStrMap;

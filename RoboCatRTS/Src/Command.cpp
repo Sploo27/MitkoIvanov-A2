@@ -37,6 +37,12 @@ shared_ptr< Command > Command::StaticReadAndCreate( InputMemoryBitStream& inInpu
 		retVal->mPlayerId = playerId;
 		retVal->Read(inInputStream);
 		break;
+	case CM_BUILD:
+		retVal = std::make_shared<BuildCommand>();
+		retVal->mNetworkId = networkId;
+		retVal->mPlayerId = playerId;
+		retVal->Read(inInputStream);
+		break;
 	default:
 		LOG( "Read in an unknown command type??" );
 		break;
@@ -266,7 +272,6 @@ shared_ptr<DashCommand> DashCommand::StaticCreate(uint32_t inMyNetId)
 void DashCommand::Write(OutputMemoryBitStream& inOutputStream)
 {
 	Command::Write(inOutputStream);
-	inOutputStream.Write(mTarget);
 }
 
 void DashCommand::ProcessCommand()
@@ -290,6 +295,66 @@ void DashCommand::ProcessCommand()
 }
 
 void DashCommand::Read(InputMemoryBitStream& inInputStream)
+{
+}
+
+shared_ptr<BuildCommand> BuildCommand::StaticCreate(uint32_t inMyNetId, const Vector3 inTarget)
+{
+	BuildCommandPtr retVal;
+	GameObjectPtr go = NetworkManager::sInstance->GetGameObject(inMyNetId);
+	uint32_t playerId = NetworkManager::sInstance->GetMyPlayerId();
+	//can only issue commands to this unit if I own it, and it's a cat,
+	//and if the target is a cat that's on a different team
+	if (go && go->GetClassId() == RoboCat::kClassId &&
+		go->GetPlayerId() == playerId)
+	{
+		retVal = std::make_shared< BuildCommand >();
+		retVal->mNetworkId = inMyNetId;
+		retVal->mPlayerId = playerId;
+		retVal->mTarget = inTarget;
+	}
+
+	//inclusion for the fast cat
+	if (go && go->GetClassId() == FastCat::kClassId &&
+		go->GetPlayerId() == playerId)
+	{
+		retVal = std::make_shared< BuildCommand >();
+		retVal->mNetworkId = inMyNetId;
+		retVal->mPlayerId = playerId;
+		retVal->mTarget = inTarget;
+	}
+
+	return retVal;
+}
+
+void BuildCommand::Write(OutputMemoryBitStream& inOutputStream)
+{
+	Command::Write(inOutputStream);
+	inOutputStream.Write(mTarget);
+}
+
+void BuildCommand::ProcessCommand()
+{
+	GameObjectPtr obj = NetworkManager::sInstance->GetGameObject(mNetworkId);
+	//robo cat attack command
+	if (obj && obj->GetClassId() == RoboCat::kClassId &&
+		obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* rc = obj->GetAsCat();
+		rc->EnterBuildState(mTarget);
+	}
+
+	//fast cat attack command
+	if (obj && obj->GetClassId() == FastCat::kClassId &&
+		obj->GetPlayerId() == mPlayerId)
+	{
+		RoboCat* fc = obj->GetAsCat();
+		fc->EnterBuildState(mTarget);
+	}
+
+}
+
+void BuildCommand::Read(InputMemoryBitStream& inInputStream)
 {
 	inInputStream.Read(mTarget);
 }

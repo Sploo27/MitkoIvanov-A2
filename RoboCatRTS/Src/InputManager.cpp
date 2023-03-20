@@ -55,7 +55,14 @@ void InputManager::HandleMouseClick( int32_t inX, int32_t inY, uint8_t button )
 	switch( button )
 	{
 	case SDL_BUTTON_LEFT:
+		uint32_t tempID;
+		tempID = mSelectedNetId;
 		mSelectedNetId = World::sInstance->TrySelectGameObject( Vector3( worldX, worldY, 0.0f ) );
+		if (mSelectedNetId == 0)
+		{
+			mSelectedNetId = tempID;
+			GenerateLeftClickCommand(Vector3(worldX, worldY, 0.0f));
+		}
 		break;
 	case SDL_BUTTON_RIGHT:
 		GenerateRightClickCommand( Vector3( worldX, worldY, 0.0f ) );
@@ -99,8 +106,22 @@ void InputManager::GenerateMiddleClickCommand(const Vector3& inWorldPos)
 	if (mSelectedNetId > 0)
 	{
 		CommandPtr cmd;
+		cmd = BuildCommand::StaticCreate(mSelectedNetId, inWorldPos);
+
+		if (cmd)
+		{
+			mCommandList.AddCommand(cmd);
+		}
+	}
+
+}
+
+void InputManager::GenerateLeftClickCommand(const Vector3& inWorldPos)
+{
+	if (mSelectedNetId > 0)
+	{
+		CommandPtr cmd;
 		cmd = SpecialAttackCommand::StaticCreate(mSelectedNetId, inWorldPos);
-		
 
 		if (cmd)
 		{

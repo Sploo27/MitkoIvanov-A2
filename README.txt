@@ -1,4 +1,4 @@
 New controls:
-Middle mouse: allows selected cat to fire yarn anywhere on the screen
+Middle mouse: Builds a new RoboCat wherever the mouse is on the screen
 Left Shift: allows selected cat to dash straight
-Space-bar: drops a bomb(yarn that stays still until a cat hits it)
+Left Click: added functionality of allowing selected cat to fire yarn anywhere on the screen wherever the mouse is
